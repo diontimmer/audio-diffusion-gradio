@@ -1,0 +1,12 @@
+import gradio as gr
+
+# initialize interface
+interface = None
+
+DISABLE = True
+
+with gr.Tab(label="ExampleExtension") as UI:
+    gr.Textbox(label="Textbox 1")
+    gr.Textbox(label="Textbox 2")
+    btn = gr.Button(label="Button 1")
+    btn.click(lambda: print(interface))

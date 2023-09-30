@@ -1,0 +1,1 @@
+"C:\Users\diont\mambaforge\envs\harmonai-tools\python.exe" "D:\DevWkspc\harmonai_gradio\gradio_extended.py"
