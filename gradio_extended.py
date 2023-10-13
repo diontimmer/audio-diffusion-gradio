@@ -15,19 +15,19 @@ from torch.nn.parameter import Parameter
 import importlib
 import random
 
-from harmonai_tools.data.dataset import create_dataloader_from_configs_and_args
-from harmonai_tools.inference.generation import (
+from stable_audio_tools.data.dataset import create_dataloader_from_configs_and_args
+from stable_audio_tools.inference.generation import (
     generate_diffusion_cond,
     generate_diffusion_uncond,
 )
-from harmonai_tools.inference.utils import prepare_audio
-from harmonai_tools.models import create_model_from_config
-from harmonai_tools.models.factory import create_model_from_config
-from harmonai_tools.training import (
+from stable_audio_tools.inference.utils import prepare_audio
+from stable_audio_tools.models import create_model_from_config
+from stable_audio_tools.models.factory import create_model_from_config
+from stable_audio_tools.training import (
     create_demo_callback_from_config,
     create_training_wrapper_from_config,
 )
-from harmonai_tools.training.utils import copy_state_dict
+from stable_audio_tools.training.utils import copy_state_dict
 from types import SimpleNamespace
 import traceback
 from tqdm import tqdm
@@ -108,7 +108,7 @@ def is_installed(package):
     return spec is not None
 
 
-class harmonai_interface:
+class stable_audio_interface:
     def __init__(
         self,
         init_model_dirs=[],
@@ -286,10 +286,10 @@ class harmonai_interface:
             torch.cuda.empty_cache()
             gc.collect()
             self.current_loaded_model = None
-            self.current_loaded_model_config = None
+            # self.current_loaded_model_config = None
             self.current_loaded_model_path = None
             self.current_loaded_pretransform_path = None
-            self.embedded_config = False
+            # self.embedded_config = False
             # self.current_set_model_config = None
             # self.current_set_model_path = None
             return True
@@ -379,15 +379,22 @@ class harmonai_interface:
     ):
         try:
             if not load_pretransform_only and self.current_loaded_model:
+                if self.embedded_config:
+                    emb = True
                 self.unload_model()
-            config_path = self.autofind_config(model_ckpt_path, None)
-            if not config_path and not self.embedded_config and not model_config:
+                if emb:
+                    self.embedded_config = True
+            if (
+                not self.current_loaded_model_config
+                and not self.embedded_config
+                and not model_config
+            ):
                 print("No config file provided")
                 gr.Error("No config file provided")
                 return False
 
-            if not self.embedded_config:
-                with open(config_path) as f:
+            if not self.embedded_config and self.current_set_model_config != "internal":
+                with open(self.current_set_model_config) as f:
                     model_config = json.load(f)
             else:
                 model_config = self.current_loaded_model_config
@@ -1117,7 +1124,7 @@ class harmonai_interface:
                 )
             )
 
-        if not self.embedded_config:
+        if not self.embedded_config and not self.current_set_model_config:
             if cfg_select_value is None:
                 return False, gr.HTML(
                     self.create_info_table(msg="🔴 Please select a config file!")
@@ -1200,7 +1207,7 @@ class harmonai_interface:
 
         visibilities = [gr.Box(visible=False)] * 2 + [gr.Box(visible=True)]
         sec_slider_updates = [
-            gr.Accordion(visible=False),
+            gr.Accordion(label="⌛ Timing Controls", visible=False),
             sec_slider_default,
             sec_slider_default,
         ]
@@ -1213,6 +1220,7 @@ class harmonai_interface:
             gr.Slider(visible=False),
             gr.Slider(visible=False),
             gr.Column(visible=False),
+            gr.Number(0.05),
         ]
 
         if ready:
@@ -1405,7 +1413,7 @@ class harmonai_interface:
             training_config = model_config.get("training", None)
 
             if model_type == "autoencoder":
-                from harmonai_tools.training.autoencoders import (
+                from stable_audio_tools.training.autoencoders import (
                     AutoencoderTrainingWrapper,
                 )
 
@@ -1435,7 +1443,7 @@ class harmonai_interface:
                     ema_copy=ema_copy if use_ema else None,
                 )
             elif model_type == "diffusion_uncond":
-                from harmonai_tools.training.diffusion import (
+                from stable_audio_tools.training.diffusion import (
                     DiffusionUncondTrainingWrapper,
                 )
 
@@ -1443,7 +1451,7 @@ class harmonai_interface:
                     self.current_set_model_path, model=model, strict=False
                 )
             elif model_type == "diffusion_autoencoder":
-                from harmonai_tools.training.diffusion import (
+                from stable_audio_tools.training.diffusion import (
                     DiffusionAutoencoderTrainingWrapper,
                 )
 
@@ -1453,7 +1461,7 @@ class harmonai_interface:
                     )
                 )
             elif model_type == "diffusion_cond":
-                from harmonai_tools.training.diffusion import (
+                from stable_audio_tools.training.diffusion import (
                     DiffusionCondTrainingWrapper,
                 )
 
@@ -1461,7 +1469,7 @@ class harmonai_interface:
                     self.current_set_model_path, model=model, strict=False
                 )
             elif model_type == "diffusion_cond_inpaint":
-                from harmonai_tools.training.diffusion import (
+                from stable_audio_tools.training.diffusion import (
                     DiffusionCondInpaintTrainingWrapper,
                 )
 
@@ -1872,7 +1880,7 @@ class harmonai_interface:
     def create_ui(self, theme):
         theme = gr.Theme.from_hub(theme).set() if theme != "default" else None
         with gr.Blocks(
-            theme=theme, css="style.css", title="Harmonai Vextra Gradio"
+            theme=theme, css="style.css", title="stable_audio Vextra Gradio"
         ) as ui:
             self.tab_control = gr.Tabs()
             with self.tab_control:
@@ -1936,7 +1944,9 @@ class harmonai_interface:
                     if "settings" not in self.hidden
                     else "model_process"
                 ),  # open settings
-                gr.Accordion(visible=False),  # default timing accordion
+                gr.Accordion(
+                    label="⌛ Timing Controls", visible=False
+                ),  # default timing accordion
                 gr.Slider(visible=False),  # default seconds start
                 gr.Slider(visible=False),  # default seconds total
                 gr.Textbox(visible=False),  # default prompt
@@ -2022,7 +2032,7 @@ def main(args):
     args.model_dir = list(set(args.model_dir))
     args.model_dir = [x for x in args.model_dir if os.path.isdir(x)]
 
-    interface = harmonai_interface(
+    interface = stable_audio_interface(
         init_model_dirs=args.model_dir,
         hidden=args.hidden,
         init_model_ckpt=args.init_model_ckpt,

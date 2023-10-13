@@ -156,3 +156,4 @@ models/diffusion/*
 logins.txt
 tags.txt
 examples.txt
+start.bat

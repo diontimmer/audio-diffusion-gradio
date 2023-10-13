@@ -1,6 +1,6 @@
 import pytorch_lightning as pl
 import torch
-from harmonai_tools.models import create_model_from_config
+from stable_audio_tools.models import create_model_from_config
 import json
 
 
