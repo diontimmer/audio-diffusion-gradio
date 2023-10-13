@@ -1788,6 +1788,15 @@ class stable_audio_interface:
                 def on_exception(self, trainer, module, err):
                     print(f"{type(err).__name__}: {err}")
 
+            class ModelConfigEmbedderCallback(pl.Callback):
+                def __init__(self, model_config):
+                    self.model_config = model_config
+
+                def on_save_checkpoint(
+                    self, trainer: pl.Trainer, pl_module: pl.LightningModule, checkpoint
+                ) -> None:
+                    checkpoint["model_config"] = self.model_config
+
             torch.manual_seed(args.seed)
 
             # Get JSON config from args.model_config
@@ -1826,6 +1835,8 @@ class stable_audio_interface:
                 model_config, demo_dl=train_dl
             )
 
+            config_embedder_callback = ModelConfigEmbedderCallback(model_config)
+
             if args.wandb_key:
                 wandb.login(key=args.wandb_key)
                 wandb_logger = pl.loggers.WandbLogger(project=args.name)
@@ -1855,7 +1866,7 @@ class stable_audio_interface:
                 else:
                     strategy = args.strategy
             else:
-                strategy = "ddp" if args.num_gpus > 1 else None
+                strategy = "ddp" if args.num_gpus > 1 else "auto"
 
             trainer = pl.Trainer(
                 devices=args.num_gpus,
@@ -1864,7 +1875,12 @@ class stable_audio_interface:
                 strategy=strategy,
                 precision=args.precision,
                 accumulate_grad_batches=args.accum_batches,
-                callbacks=[ckpt_callback, demo_callback, exc_callback],
+                callbacks=[
+                    ckpt_callback,
+                    demo_callback,
+                    exc_callback,
+                    config_embedder_callback,
+                ],
                 logger=wandb_logger,
                 log_every_n_steps=1,
                 max_epochs=10000000,
@@ -2015,6 +2031,17 @@ class stable_audio_interface:
 
 
 def main(args):
+    # make authfile if not exists
+    if not os.path.isfile(args.authfile):
+        from getpass import getpass
+
+        print("No authfile found, creating one and registering initial user.")
+
+        # prompt user for initial username and password
+        input_username = input("Enter registration username: ")
+        input_password = getpass("Enter registration password: ")
+        with open(args.authfile, "w") as f:
+            f.write(f"{input_username}:{input_password}")
     torch.manual_seed(42)
     if args.hidden:
         print(f"Hidden functions: {args.hidden}")
