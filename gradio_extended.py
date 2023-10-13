@@ -1880,7 +1880,7 @@ class stable_audio_interface:
     def create_ui(self, theme):
         theme = gr.Theme.from_hub(theme).set() if theme != "default" else None
         with gr.Blocks(
-            theme=theme, css="style.css", title="stable_audio Vextra Gradio"
+            theme=theme, css="style.css", title="Audio Diffusion Gradio"
         ) as ui:
             self.tab_control = gr.Tabs()
             with self.tab_control:
