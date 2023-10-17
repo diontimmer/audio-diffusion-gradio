@@ -39,3 +39,6 @@ To install/run, please launch ```start_windows.bat``` or ```start_unix.sh``` dep
 - `--extensions-folder` (Optional, Default: "./extensions"): Path to the extensions folder.
 - `--no-auth` (Optional, Default: False): Disable authentication (use this flag to disable).
 - `--no-share` (Optional, Default: False): Disable sharing (use this flag to disable).
+
+## TODO
+- fix tyler.py functions to include proper overlapping instead of hard cuts.
