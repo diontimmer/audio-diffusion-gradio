@@ -1,11 +1,18 @@
 # audio-diffusion-gradio (alpha)
 
-![adg](https://www.dropbox.com/scl/fi/6l0j8nsbitbagbzcetd6v/audio-diffusion-gradio.png?rlkey=6zzx3mjxq4gemj1dgbjkvjsdw&raw=1)
- The Audio Diffusion Gradio Interface is a user-friendly graphical user interface (GUI) made in Gradio that simplifies the process of working with audio diffusion models, autoencoders, diffusion autoencoders, and  various models trainable using the stable-audio-tools package. This interface not only streamlines your audio diffusion tasks but also provides a modular extension system, enabling users to easily integrate additional functionalities. This software is a WIP and alot of functionality could have bugs.
- The GUI will ask for an initial login+password combination for access to the gui. This will be stored in plain-text format in ```logins.txt```. Additional users can be added in the format username:password.
+## ⚠️ This software is a WIP and alot of functionality could have bugs. ⚠️
 
- To run, please launch start_windows or start_unix.sh depending on your platform. This will create a virtual environment for you. If you prefer to run your own python, you are free to install the ```requirements.txt``` file and run ```gradio_extended.py``` using your own interpreter.
- Place your loadable models in the ```./models``` folder to access them through the GUI. All models need their configs to load properly. You can select the config using the menu, or place the .json alongside the model with the exact same name. You can also embed the model config dictionary directly into the file as a top-level key as ```model_config``` and it will be able to read that as well. The internal trainer will embed the model config automatically.
+![adg](https://www.dropbox.com/scl/fi/6l0j8nsbitbagbzcetd6v/audio-diffusion-gradio.png?rlkey=6zzx3mjxq4gemj1dgbjkvjsdw&raw=1)
+
+## Overview
+ The Audio Diffusion Gradio Interface is a user-friendly graphical user interface (GUI) made in Gradio that simplifies the process of working with audio diffusion models, autoencoders, diffusion autoencoders, and  various models trainable using the stable-audio-tools package. This interface not only streamlines your audio diffusion tasks but also provides a modular extension system, enabling users to easily integrate additional functionalities. The GUI will ask for an initial login+password combination for access to the gui, this will be stored in plain-text format in ```logins.txt```. Additional users can be added in the format username:password.
+
+## Installation
+To install/run, please launch ```start_windows.bat``` or ```start_unix.sh``` depending on your platform. This will create a virtual environment for you. If you prefer to run your own python, you are free to install the ```requirements.txt``` file and run ```gradio_extended.py``` using your own interpreter.
+ Place your loadable models in the ```./models``` folder to access them through the GUI. 
+
+## Using stable-audio-tools models
+ All models need their configs to load properly. You can select the config using the menu, or place the .json alongside the model with the exact same name. You can also embed the model config dictionary directly into the file as a top-level key as ```model_config``` and it will be able to read that as well. The internal trainer will embed the model config automatically.
 
  The examples and tags components can be activated and filled by creating an 'examples.txt' or 'tags.txt' file and placing an element you would want to view on every newline.
 
@@ -32,3 +39,6 @@
 - `--extensions-folder` (Optional, Default: "./extensions"): Path to the extensions folder.
 - `--no-auth` (Optional, Default: False): Disable authentication (use this flag to disable).
 - `--no-share` (Optional, Default: False): Disable sharing (use this flag to disable).
+
+## TODO
+- fix tyler.py functions to include proper overlapping instead of hard cuts.
