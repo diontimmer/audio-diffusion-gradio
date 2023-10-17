@@ -1113,21 +1113,21 @@ class stable_audio_interface:
         # Check if model and config are selected
         if mod_select_value is None:
             return False, gr.HTML(
-                self.create_info_table(msg="🔴 Please select a model file!")
+                self.create_info_table(msg="🟥 Please select a model file!")
             )
         elif not mod_select_value.endswith(".ckpt"):
             return False, gr.HTML(
                 self.create_info_table(
                     model_filename=model_filename,
                     pretransform_filename=pretransform_filename,
-                    msg="🔴 Please select a valid model checkpoint (.ckpt) file!",
+                    msg="🟥 Please select a valid model checkpoint (.ckpt) file!",
                 )
             )
 
         if not self.embedded_config and not self.current_set_model_config:
             if cfg_select_value is None:
                 return False, gr.HTML(
-                    self.create_info_table(msg="🔴 Please select a config file!")
+                    self.create_info_table(msg="🟥 Please select a config file!")
                 )
 
             self.current_set_model_config = cfg_select_value
@@ -1143,7 +1143,7 @@ class stable_audio_interface:
                 self.create_info_table(
                     model_filename=model_filename,
                     pretransform_filename=pretransform_filename,
-                    msg="🔴 Please select a valid config file!",
+                    msg="🟥 Please select a valid config file!",
                 )
             )
 
@@ -1161,7 +1161,7 @@ class stable_audio_interface:
                         model_filename=model_filename,
                         pretransform_filename=pretransform_filename,
                         model_config=model_config,
-                        msg="🔴 Error loading model!",
+                        msg="🟥 Error loading model!",
                     )
                 )
 
@@ -1171,7 +1171,7 @@ class stable_audio_interface:
                 model_filename=model_filename,
                 pretransform_filename=pretransform_filename,
                 model_config=model_config,
-                msg="🟢 Ready!",
+                msg="🟩 Ready!",
             )
         )
 
@@ -1986,7 +1986,7 @@ class stable_audio_interface:
             "sample_size": "None",
             "audio_channels": "None",
         },
-        msg="🔴 Please set your files.",
+        msg="🟥 Please set your files.",
     ):
         if model_config["model_type"] == "None":
             wraptext = ""
