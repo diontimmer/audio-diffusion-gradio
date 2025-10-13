@@ -4,6 +4,12 @@
 
 ## ⚠️ This software is a WIP and alot of functionality could have bugs. ⚠️
 
+## Update: 2025 Sept 20
+* Use @sskalnik fork of [stable-audio-tools](https://github.com/sskalnik/stable-audio-tools) in order to fix a longstanding issue with pickling by adding `dill`. Also adds AIF/AIFF support.
+* Use pre-compiled wheel for `flash_attn` since there are no official pre-compiled wheels for CUDA 12.9: [get it here!](https://github.com/sskalnik/flash_attn_wheels)
+* Use specific versions of `numba` and `llvmlite` in order to get around issues with `llvmlite` on Windows 11 using VS 2022.
+* Update to latest [stable-audio-tools](https://github.com/Stability-AI/stable-audio-tools) 0.19.0.
+
 ![adg](https://www.dropbox.com/scl/fi/6l0j8nsbitbagbzcetd6v/audio-diffusion-gradio.png?rlkey=6zzx3mjxq4gemj1dgbjkvjsdw&raw=1)
 
 ## Overview
@@ -43,4 +49,8 @@ To install/run, please launch ```start_windows.bat``` or ```start_unix.sh``` dep
 - `--no-share` (Optional, Default: False): Disable sharing (use this flag to disable).
 
 ## TODO
-- fix tyler.py functions to include proper overlapping instead of hard cuts.
+* fix tyler.py functions to include proper overlapping instead of hard cuts.
+* Set output directory for saving new training/finetune checkpoints.
+* Add training logic and example JSON config files for [stable-audio-open-small](https://huggingface.co/stabilityai/stable-audio-open-small), which uses [Adversarial Relativistic-Contrastive (ARC) post-training](https://arxiv.org/abs/2505.08175). This results in shorter sample lengths (~11 seconds), but massively reduces the resource requirements and inference time.
+* Add example JSON config files for models and datasets.
+* Add example metadata module(s).

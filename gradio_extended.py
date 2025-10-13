@@ -28,7 +28,7 @@ from stable_audio_tools.training import (
     create_demo_callback_from_config,
     create_training_wrapper_from_config,
 )
-from stable_audio_tools.training.utils import copy_state_dict
+from stable_audio_tools.models.utils import copy_state_dict
 from types import SimpleNamespace
 import traceback
 from tqdm import tqdm
@@ -1142,7 +1142,7 @@ class stable_audio_interface:
         if not self.embedded_config and not self.current_set_model_config:
             if cfg_select_value is None:
                 return False, gr.HTML(
-                    self.create_info_table(msg="🟥 Please select a config file!")
+                    self.create_info_table(msg="🟥 Please select (click on) a config file!")
                 )
 
             self.current_set_model_config = cfg_select_value
